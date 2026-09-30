@@ -1,0 +1,74 @@
+// Collaborative Document Editing (Section 3 Q1).
+//
+// A central DocumentServer keeps documents in memory. Clients create,
+// read, and edit documents, and can subscribe to a document to receive
+// its new contents automatically after every modification.
+//
+//   CreateDocument     unary        create a named document
+//   GetDocument        unary        read current contents
+//   EditDocument       unary        insert text at a character position
+//   SubscribeToUpdates server-stream receive the document after each edit
+//
+// All mutating RPCs return the document's new version number so clients
+// can tell concurrent edits apart.
+
+syntax = "proto3";
+
+package docs;
+
+message CreateDocumentRequest {
+  string name = 1;
+  string initial_content = 2;
+}
+
+message CreateDocumentResponse {
+  string name = 1;
+  int64 version = 2;
+}
+
+message GetDocumentRequest {
+  string name = 1;
+}
+
+message GetDocumentResponse {
+  string name = 1;
+  string content = 2;
+  int64 version = 3;
+}
+
+message EditDocumentRequest {
+  string name = 1;
+  int64 position = 2;     // character position; content length = append
+  string text = 3;
+  int64 edited_by = 4;    // optional client id, echoed in DocumentUpdate
+}
+
+message EditDocumentResponse {
+  string name = 1;
+  int64 version = 2;      // document version after this edit
+  string content = 3;     // full content after this edit
+}
+
+message UpdateRequest {
+  string name = 1;
+}
+
+// Pushed to every subscriber after each modification of the document.
+message DocumentUpdate {
+  string name = 1;
+  string content = 2;
+  int64 version = 3;
+  int64 edited_by = 4;    // client-supplied editor id echoed back (0 = server)
+}
+
+message Ack {
+  bool ok = 1;
+  string message = 2;
+}
+
+service DocumentService {
+  rpc CreateDocument (CreateDocumentRequest) returns (CreateDocumentResponse);
+  rpc GetDocument (GetDocumentRequest) returns (GetDocumentResponse);
+  rpc EditDocument (EditDocumentRequest) returns (EditDocumentResponse);
+  rpc SubscribeToUpdates (UpdateRequest) returns (stream DocumentUpdate);
+}

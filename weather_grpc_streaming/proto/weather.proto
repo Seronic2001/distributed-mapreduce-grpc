@@ -1,0 +1,156 @@
+// Q8 Weather & Environmental Analytics — real-time streaming (Section 2 Q2).
+//
+// Architecture (see README.md):
+//
+//   replay client ──StreamRecords(stream RecordBatch)──▶ coordinator
+//                                                           │ bidi ProcessBatches
+//                                                           ▼ (round-robin batches)
+//                                              worker 1 .. worker W
+//                                                           ▲ GetPartial / Reset
+//   dashboard ──SubscribeUpdates/GetAnalytics──────────────▶ coordinator
+//
+//  * WeatherCoordinator.StreamRecords    client-streaming ingestion
+//  * WeatherCoordinator.GetAnalytics     unary query (any number of
+//                                        concurrent query clients, valid
+//                                        while ingestion is still running)
+//  * WeatherCoordinator.SubscribeUpdates server-streaming periodic snapshots
+//  * WeatherWorker.ProcessBatches        bidi: the coordinator streams
+//                                        batches to a worker; the worker
+//                                        streams back a per-batch ack with
+//                                        the batch's delta Partial.
+//  * Partial                             the mergeable aggregate of one
+//                                        worker (or one batch delta): the
+//                                        same commutative merge algebra the
+//                                        MapReduce combiner/reducer use.
+
+syntax = "proto3";
+
+package weather;
+
+// ---------------------------------------------------------------- data ---
+
+message WeatherRecord {
+  int64 timestamp = 1;
+  int64 station_id = 2;
+  double temperature = 3;
+  double humidity = 4;
+  double pressure = 5;
+  double rainfall = 6;
+  double wind_speed = 7;
+}
+
+// One unit of work handed to a worker. batch_seq is assigned by the
+// coordinator (globally unique) and echoed in BatchAck.
+message RecordBatch {
+  bool header = 1;          // first batch of a replay: carries top_k
+  int64 top_k = 2;          // K for the Top-K stations analytics
+  int64 batch_seq = 3;
+  repeated WeatherRecord records = 4;
+}
+
+message BatchAck {
+  int64 batch_seq = 1;      // echoes the coordinator's sequence number
+  int64 worker_total = 2;   // worker's running record count
+  Partial delta = 3;        // this batch's partial aggregate (empty in
+                            // periodic-sync mode)
+}
+
+// ------------------------------------------------- mergeable aggregates ---
+
+message IntervalCount {
+  int64 interval = 1;       // timestamp / 60
+  int64 count = 2;
+}
+
+message StationPartial {
+  int64 station_id = 1;
+  int64 count = 2;
+  double temperature_sum = 3;
+  double rainfall_sum = 4;
+}
+
+// A mergeable partial aggregate. Merging is commutative and associative:
+// counts/sums add, minima/min, maxima/max, hottest/coldest follow the
+// assignment's tie-breaking (temperature, then smaller timestamp, then
+// smaller station id).
+message Partial {
+  int64 count = 1;
+  repeated double sums = 2;            // 5: T H P R W
+  repeated double mins = 3;            // 3: T H P
+  repeated double maxs = 4;            // 5: T H P R W
+  int64 extreme_events = 5;
+  bool has_hottest = 6;
+  double hottest_temp = 7;
+  int64 hottest_station = 8;
+  int64 hottest_timestamp = 9;
+  bool has_coldest = 10;
+  double coldest_temp = 11;
+  int64 coldest_station = 12;
+  int64 coldest_timestamp = 13;
+  repeated IntervalCount intervals = 14;
+  repeated StationPartial stations = 15;
+}
+
+// ------------------------------------------------------------- queries ---
+
+message AnalyticsRequest {}
+
+message WorkerInfo {
+  string endpoint = 1;
+  int64 records_processed = 2;
+}
+
+message AnalyticsReport {
+  Partial aggregate = 1;          // global merged state (render client-side)
+  int64 top_k = 2;
+  int64 records_received = 3;     // coordinator counters
+  int64 batches_received = 4;
+  double elapsed_seconds = 5;
+  double records_per_second = 6;
+  bool ingestion_active = 7;
+  int32 active_workers = 8;
+  repeated WorkerInfo workers = 9;
+  int64 report_unix_time = 10;
+}
+
+message SubscribeRequest {
+  double interval_seconds = 1;    // snapshot cadence (0 -> server default)
+}
+
+message IngestSummary {
+  int64 records_accepted = 1;
+  int64 batches_accepted = 2;
+  double elapsed_seconds = 3;
+  double records_per_second = 4;
+  AnalyticsReport final_report = 5;
+}
+
+// ------------------------------------------------------------ services ---
+
+message ResetRequest {}
+message Ack {
+  bool ok = 1;
+  string message = 2;
+}
+
+message RegisterRequest {
+  string worker_endpoint = 1;   // host:port the COORDINATOR can reach
+}
+
+// One analytics worker. Workers are independent gRPC servers; the
+// coordinator is their client.
+service WeatherWorker {
+  rpc ProcessBatches (stream RecordBatch) returns (stream BatchAck);
+  rpc GetPartial (AnalyticsRequest) returns (Partial);
+  rpc Reset (ResetRequest) returns (Ack);
+}
+
+// The coordinator: receives replay streams, distributes batches to the
+// workers, combines their partials, and answers analytics queries.
+service WeatherCoordinator {
+  rpc StreamRecords (stream RecordBatch) returns (IngestSummary);
+  rpc GetAnalytics (AnalyticsRequest) returns (AnalyticsReport);
+  rpc SubscribeUpdates (SubscribeRequest) returns (stream AnalyticsReport);
+  rpc RegisterWorker (RegisterRequest) returns (Ack);
+  rpc Reset (ResetRequest) returns (Ack);
+}

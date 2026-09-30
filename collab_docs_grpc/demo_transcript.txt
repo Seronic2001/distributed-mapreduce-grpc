@@ -1,0 +1,42 @@
+========================================================================
+ Collaborative Document Editor — recorded two-client demo
+ server: 127.0.0.1:50761      clients: C1, C2 (real client.py processes)
+========================================================================
+[  1.106s] ──     Step 1: Client 1 creates the document
+[  1.106s] C1 »  create report.txt "Hello World"
+[  1.112s] C1    [Client] Document report.txt created (v1).
+[  1.607s] ──     Step 2: both clients open the document
+[  1.607s] C1 »  open report.txt
+[  1.610s] C1    [Client] Hello World
+[  2.108s] C2 »  open report.txt
+[  2.113s] C2    [Client] Hello World
+[  2.609s] ──     Step 3: Client 2 subscribes to updates
+[  2.609s] C2 »  subscribe report.txt
+[  2.611s] C2    [Client] Subscribed to updates for report.txt.
+[  2.611s] C2    [Update] Document report.txt modified (v1).
+[  2.611s] C2    Hello World
+[  3.409s] ──     Step 4: Client 1 edits — Client 2 receives the update without asking
+[  3.409s] C1 »  edit report.txt 6 "Distributed "
+[  3.412s] C2    [Update] Document report.txt modified (v2).
+[  3.412s] C2    Hello Distributed World
+[  3.412s] C1    [Client] Edited report.txt -> v2: Hello Distributed World
+[  4.410s] ──     Step 5: concurrent edits — both clients insert at position 6 of a fresh document
+[  4.410s] C1 »  create design.txt "Hello World"
+[  4.412s] C1    [Client] Document design.txt created (v1).
+[  4.910s] C2 »  subscribe design.txt
+[  4.912s] C2    [Client] Subscribed to updates for design.txt.
+[  4.913s] C2    [Update] Document design.txt modified (v1).
+[  4.913s] C2    Hello World
+[  5.711s] C1 »  edit design.txt 6 "Distributed "
+[  5.714s] C2    [Update] Document design.txt modified (v2).
+[  5.714s] C2    Hello Distributed World
+[  5.714s] C1    [Client] Edited design.txt -> v2: Hello Distributed World
+[  5.731s] C2 »  edit design.txt 6 "Systems "
+[  5.734s] C2    [Client] Edited design.txt -> v3: Hello Systems Distributed World
+[  5.734s] C2    [Update] Document design.txt modified (v3).
+[  5.734s] C2    Hello Systems Distributed World
+[  7.432s] ──     Step 6: final state as read by both clients
+[  7.432s] C1 »  open design.txt
+[  7.434s] C1    [Client] Hello Systems Distributed World
+[  7.933s] C2 »  open design.txt
+[  7.935s] C2    [Client] Hello Systems Distributed World

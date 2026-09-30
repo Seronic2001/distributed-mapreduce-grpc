@@ -1,0 +1,312 @@
+==========================================
+SLURM_JOB_ID = 100460
+SLURM_NODELIST = node[01-03,06]
+SLURM_JOB_GPUS = 
+==========================================
+=========================================
+SLURM Multi-Node Job ID: 100460
+Date: Tue Sep 29 20:36:06 IST 2026
+Host: node01.local
+Allocated nodes: 4
+Total tasks: 16
+Node list: node[01-03,06]
+Python: /usr/bin/python3 (Python 3.6.8)
+=========================================
+
+=== Step 0: Compiling C++ binaries and Protobuf stubs ===
+Building MapReduce C++ binaries...
+make: Nothing to be done for 'all'.
+Building sequential reference and MPI binaries...
+✓ Binaries and protos ready.
+
+=== Step 1: Section 1 Q1 — Matrix Multiplication (Row-Row MapReduce) ===
+Running correctness suite (29 tests)...
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example1_even_R3: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example1_even_R3_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example1_sparse_R2: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example1_sparse_R5: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example2_uneven_R3: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example2_uneven_R3_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+pdf_example2_uneven_R1: PASS
+wrote /tmp/opencode/s1q1/out.txt
+edge_m1: PASS
+wrote /tmp/opencode/s1q1/out.txt
+edge_n1: PASS
+wrote /tmp/opencode/s1q1/out.txt
+edge_1x1: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_1(m=3,n=2,p=3,d=1.0,R=2): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_1_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_2(m=4,n=4,p=4,d=1.0,R=3): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_2_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_3(m=5,n=2,p=7,d=1.0,R=4): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_3_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_4(m=10,n=10,p=10,d=0.4,R=1): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_4_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_5(m=7,n=1,p=5,d=1.0,R=2): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_5_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_6(m=1,n=6,p=1,d=1.0,R=3): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_6_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_7(m=50,n=40,p=30,d=0.2,R=4): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_7_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_8(m=16,n=16,p=16,d=0.05,R=1): PASS
+wrote /tmp/opencode/s1q1/out.txt
+random_8_nocombiner: PASS
+wrote /tmp/opencode/s1q1/out.txt
+sparse_seed7: PASS
+wrote /tmp/opencode/s1q1/out.txt
+sparse_seed8: PASS
+wrote /tmp/opencode/s1q1/out.txt
+sparse_seed9: PASS
+----------------------------------------
+29 passed, 0 failed
+Running SLURM matmul benchmark across 2-node and 4-node tasks...
+--- [1a] Executing 2-Node Workload: 8 mappers across 2 nodes ---
+== matmul_slurm: slurm job 100460 — C = A(400x400) x B(400x400), R=8 mappers ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /home/user/mapreduce_grpc_suite/matmul_mapreduce/bench_data/C_400_8.txt
+--- [1b] Executing 4-Node Workload: 16 mappers across 4 nodes ---
+== matmul_slurm: slurm job 100460 — C = A(400x400) x B(400x400), R=16 mappers ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /home/user/mapreduce_grpc_suite/matmul_mapreduce/bench_data/C_400_16.txt
+✓ S1 Q1 completed (timing recorded to matmul_mapreduce/results/matmul_timings.csv).
+
+=== Step 2: Section 2 Q1 — Weather Analytics (MapReduce Multi-Node) ===
+Running correctness suite (24 tests)...
+sample_M1: PASS
+sample_M2: PASS
+sample_M4: PASS
+sample_M8: PASS
+sample_M4_nocombiner: PASS
+sample_M4_flush3: PASS
+gen_cfg1(M=2): PASS
+gen_cfg1_nocombiner: PASS
+gen_cfg1_flush7: PASS
+gen_cfg2(M=3): PASS
+gen_cfg2_nocombiner: PASS
+gen_cfg2_flush7: PASS
+gen_cfg3(M=4): PASS
+gen_cfg3_nocombiner: PASS
+gen_cfg3_flush7: PASS
+gen_cfg4(M=1): PASS
+gen_cfg4_nocombiner: PASS
+gen_cfg4_flush7: PASS
+gen_cfg5(M=2): PASS
+gen_cfg5_nocombiner: PASS
+gen_cfg5_flush7: PASS
+gen_cfg6(M=3): PASS
+gen_cfg6_nocombiner: PASS
+gen_cfg6_flush7: PASS
+----------------------------------------
+24 passed, 0 failed
+Running MPI vs MapReduce benchmark across 2-node and 4-node scales...
+=== N=10000 ===
+  seq    : 0.00388352s
+  mpi P=1: 0.002091s
+  mpi P=2: 0.003339s
+  mpi P=4: 0.004151s
+  mpi P=8: 0.027509s
+  mpi P=16: 0.055032s
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=1: .219101s
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=2: .249037s
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=4: .262665s
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=8: .494705s
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=16: .502335s
+=== N=100000 ===
+  seq    : 0.0133261s
+  mpi P=1: 0.015550s
+  mpi P=2: 0.016404s
+  mpi P=4: 0.022324s
+  mpi P=8: 0.062369s
+  mpi P=16: 0.095871s
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=1: .329529s
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=2: .300809s
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=4: .302291s
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=8: .518786s
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=16: .555250s
+=== N=1000000 ===
+  seq    : 0.106408s
+  mpi P=1: 0.143535s
+  mpi P=2: 0.130721s
+  mpi P=4: 0.188609s
+  mpi P=8: 0.413340s
+  mpi P=16: 0.526063s
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=1 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=1: 1.288175s
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=2 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=2: .895425s
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=4 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x1, node02.local x1, node03.local x1, node06.local x1
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=4: .583495s
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=8 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x2, node02.local x2, node03.local x2, node06.local x2
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=8: .788595s
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+== run_slurm: slurm job 100460 — M=16 mappers, combiner=1, host=node01.local ==
+   map placement: node01.local x4, node02.local x4, node03.local x4, node06.local x4
+wrote /tmp/opencode/q8mr_bench_out.txt
+  mr  M=16: .688265s
+wrote results/comparison.csv and results/summary.md
+✓ S2 Q1 completed (results written to weather_mapreduce/results/comparison.csv).
+
+=== Step 3: Section 2 Q2 — Weather Analytics (gRPC Streaming) ===
+WARNING: python3 'grpc' module not found in this environment.
+To run gRPC streaming: ensure python3 grpcio is available (or activate virtual environment).
+
+=== Step 4: Section 3 Q1 — Collaborative Document Editing (gRPC) ===
+WARNING: python3 'grpc' module not found on cluster node.
+To install on cluster, run: ./run_cluster.sh setup-env
+
+=========================================
+Cluster CSV Generation Complete!
+Date: Tue Sep 29 20:37:50 IST 2026
+CSV files generated:
+-rw-r--r-- 1 user users 9.5K Sep 29 20:36 matmul_mapreduce/results/matmul_timings.csv
+-rw-r--r-- 1 user users 1.6K Sep 29 20:37 weather_mapreduce/results/comparison.csv
+=========================================

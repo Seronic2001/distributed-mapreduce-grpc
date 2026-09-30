@@ -1,0 +1,3 @@
+records,workers,batch_size,rep,elapsed_s,recs_per_s,query_latency_ms
+10000,1,1000,1,0.0925,108087,66.81
+10000,2,1000,1,0.1312,76234,72.95

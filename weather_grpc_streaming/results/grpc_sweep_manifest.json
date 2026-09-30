@@ -1,0 +1,49 @@
+{
+  "started_utc": "2026-09-29T15:36:19Z",
+  "ended_utc": "2026-09-29T15:40:09Z",
+  "grid": {
+    "sizes": [
+      100000,
+      1000000
+    ],
+    "workers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "batch_sizes": [
+      1000,
+      4000,
+      16000
+    ],
+    "reps": 3,
+    "queries": false,
+    "stations": 500,
+    "seed": 42
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "cpu_count": 8,
+    "grpc_version": "1.84.0"
+  },
+  "repetitions_recorded": 72,
+  "datasets": {
+    "100000": {
+      "path": "/tmp/opencode/q8grpc_bench_100000.txt",
+      "sha256": "b3815f34479f88a5b0d68087b54d85090cfb6a006719d8722ea8aea03da1da70",
+      "bytes": 3574281
+    },
+    "1000000": {
+      "path": "/tmp/opencode/q8grpc_bench_1000000.txt",
+      "sha256": "a1ea00d96a4e8dd5ae21eeade930a1474b3de183e975810422a1c73081ab8d50",
+      "bytes": 35744003
+    }
+  },
+  "notes": [
+    "replay at max speed (no artificial rate limit)",
+    "throughput counted from dataset header N over end-to-end client wall time; server startup is excluded (system is started before timing begins)",
+    "system processes are SIGINT-stopped between configs"
+  ]
+}
